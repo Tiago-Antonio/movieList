@@ -1,0 +1,53 @@
+create database moviespweb;
+use moviespweb;
+
+CREATE TABLE users (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	nome VARCHAR(100) NOT NULL,
+	email VARCHAR(100) NOT NULL UNIQUE,
+	password VARCHAR(255) NOT NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE filmes (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	tmdb_id INT DEFAULT NULL,
+	titulo VARCHAR(255) NOT NULL,
+	descricao TEXT,
+	imagem_url VARCHAR(255),
+	ano_lancamento YEAR,
+	nota INT,
+	genero VARCHAR(100),
+	fonte ENUM('local', 'tmdb') DEFAULT 'local',
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	UNIQUE (tmdb_id)
+);
+
+CREATE TABLE favoritos (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	user_id INT NOT NULL,
+	filme_id INT NOT NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+	FOREIGN KEY (filme_id) REFERENCES filmes(id) ON DELETE CASCADE,
+	UNIQUE (user_id, filme_id)
+);
+
+CREATE TABLE avaliacoes (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	user_id INT NOT NULL,
+	filme_id INT NOT NULL,
+    	nota_geral TINYINT CHECK (nota_geral BETWEEN 1 AND 10),
+    	nota_trilha TINYINT CHECK (nota_trilha BETWEEN 1 AND 10),
+    	nota_roteiro TINYINT CHECK (nota_roteiro BETWEEN 1 AND 10),
+    	nota_efeito_especial TINYINT CHECK (nota_efeito_especial BETWEEN 1 AND 10),
+    	comentario TEXT,
+    	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    	FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    	FOREIGN KEY (filme_id) REFERENCES filmes(id) ON DELETE CASCADE,
+    	UNIQUE (user_id, filme_id) 
+);
